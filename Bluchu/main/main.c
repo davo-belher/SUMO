@@ -131,6 +131,8 @@ static void esp_spp_cb(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
                     // MoveLeftForward();
                     ESP_LOGE(SPP_TAG," IZQUIERDA");
                     break;
+                default:
+                    break;
             }
         }
 #else
