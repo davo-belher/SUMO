@@ -24,8 +24,8 @@ static const char *TAG = "STEP";
 #define BDC_MCPWM_FREQ_HZ             25000    // 25KHz PWM
 #define BDC_MCPWM_DUTY_TICK_MAX       (BDC_MCPWM_TIMER_RESOLUTION_HZ / BDC_MCPWM_FREQ_HZ) // maximum value we can set for the duty cycle, in ticks
 // Motor 1
-#define BDC_MCPWM_GPIO_A              21
-#define BDC_MCPWM_GPIO_B              22
+#define BDC_MCPWM_GPIO_A              22
+#define BDC_MCPWM_GPIO_B              21
 // Motor 2 
 #define BDC_MCPWM_GPIO_C              19
 #define BDC_MCPWM_GPIO_D              18
@@ -62,6 +62,9 @@ void app_main(void)
     ESP_ERROR_CHECK(bdc_motor_enable(motor_2));
     
     while (1) {
+        bdc_motor_set_speed(motor_1,300);
+        bdc_motor_set_speed(motor_2,400);
+    
         ESP_LOGI(TAG, "Forward motor 1");
         ESP_ERROR_CHECK(bdc_motor_forward(motor_1));
         vTaskDelay(pdMS_TO_TICKS(2000));
