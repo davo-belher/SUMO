@@ -60,28 +60,28 @@ void app_main(void)
     ESP_LOGI(TAG, "Enable motors");
     ESP_ERROR_CHECK(bdc_motor_enable(motor_1));
     ESP_ERROR_CHECK(bdc_motor_enable(motor_2));
+    bdc_motor_set_speed(motor_1,300);
+    bdc_motor_set_speed(motor_2,400);
     
     while (1) {
-        bdc_motor_set_speed(motor_1,300);
-        bdc_motor_set_speed(motor_2,400);
     
         ESP_LOGI(TAG, "Forward motor 1");
         ESP_ERROR_CHECK(bdc_motor_forward(motor_1));
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(200));
         ESP_LOGI(TAG, "reverse motor 1");
-        ESP_ERROR_CHECK(bdc_motor_reverse(motor_1));
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        ESP_ERROR_CHECK(bdc_motor_reverse(motor_1));        
+        vTaskDelay(pdMS_TO_TICKS(200));
         ESP_LOGI(TAG, "stop motor 1");
         ESP_ERROR_CHECK(bdc_motor_coast(motor_1));
-        vTaskDelay(pdMS_TO_TICKS(2000));   
+        vTaskDelay(pdMS_TO_TICKS(200));
         ESP_LOGI(TAG, "Forward motor 2");
         ESP_ERROR_CHECK(bdc_motor_forward(motor_2));
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(200));
         ESP_LOGI(TAG, "reverse motor 2");
         ESP_ERROR_CHECK(bdc_motor_reverse(motor_2));
-        vTaskDelay(pdMS_TO_TICKS(2000));
+        vTaskDelay(pdMS_TO_TICKS(200));
         ESP_LOGI(TAG, "stop motor 2");
         ESP_ERROR_CHECK(bdc_motor_coast(motor_2));
-        vTaskDelay(pdMS_TO_TICKS(2000));   
+        vTaskDelay(pdMS_TO_TICKS(200));
     }
 }
