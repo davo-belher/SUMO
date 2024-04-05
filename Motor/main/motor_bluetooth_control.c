@@ -31,7 +31,7 @@
 static const char *TAG = "INSTRUCTION";
 #define SPP_TAG "SUMO-BOT"
 #define SPP_SERVER_NAME "SPP_SERVER"
-#define EXAMPLE_DEVICE_NAME "BLUCHU THE BOT"
+#define EXAMPLE_DEVICE_NAME "BLUCHU THE BOT" // Have unique names for each device you are using
 #define SPP_SHOW_DATA 0
 #define SPP_SHOW_SPEED 1
 #define SPP_SHOW_MODE SPP_SHOW_DATA    /*Choose show mode: show data or speed*/
@@ -53,15 +53,15 @@ static int delay_ms = 100;
 #define BDC_MCPWM_TIMER_RESOLUTION_HZ 10000000 // 10MHz, 1 tick = 0.1us
 #define BDC_MCPWM_FREQ_HZ             25000    // 25KHz PWM
 #define BDC_MCPWM_DUTY_TICK_MAX       (BDC_MCPWM_TIMER_RESOLUTION_HZ / BDC_MCPWM_FREQ_HZ) // maximum value we can set for the duty cycle, in ticks
-// Motor 1
-#define BDC_MCPWM_GPIO_A              22
-#define BDC_MCPWM_GPIO_B              21
-// Motor 2 
-#define BDC_MCPWM_GPIO_C              19
-#define BDC_MCPWM_GPIO_D              18
+// Motor Izquierdo
+#define BDC_MCPWM_GPIO_A              22    //  In1
+#define BDC_MCPWM_GPIO_B              21    //  In2
+// Motor Derecho
+#define BDC_MCPWM_GPIO_C              19    //  In3
+#define BDC_MCPWM_GPIO_D              18    //  In4
 
-bdc_motor_handle_t motor_1 = NULL;
-bdc_motor_handle_t motor_2 = NULL;
+bdc_motor_handle_t motor_I = NULL;
+bdc_motor_handle_t motor_D = NULL;
 
 static char *bda2str(uint8_t * bda, char *str, size_t size)
 {
@@ -140,40 +140,36 @@ static void esp_spp_cb(esp_spp_cb_event_t event, esp_spp_cb_param_t *param)
             char val = param -> data_ind.data[k];
             switch(val){
                 case 'U':
-                    //  moveForward();
                     ESP_LOGE(SPP_TAG," Avanza");
-                    bdc_motor_forward(motor_2);
-                    bdc_motor_forward(motor_1);
+                    bdc_motor_forward(motor_I);
+                    bdc_motor_forward(motor_D);
                     vTaskDelay(pdMS_TO_TICKS(delay_ms));
-                    bdc_motor_brake(motor_1);
-                    bdc_motor_brake(motor_2);
+                    bdc_motor_brake(motor_I);
+                    bdc_motor_brake(motor_D);
                     break;
                 case 'D': 
-                    // moveBackward();
                     ESP_LOGE(SPP_TAG," REVERSA");
-                    bdc_motor_reverse(motor_2);
-                    bdc_motor_reverse(motor_1);
+                    bdc_motor_reverse(motor_I);
+                    bdc_motor_reverse(motor_D);
                     vTaskDelay(pdMS_TO_TICKS(delay_ms));
-                    bdc_motor_brake(motor_1);
-                    bdc_motor_brake(motor_2);
+                    bdc_motor_brake(motor_I);
+                    bdc_motor_brake(motor_D);
                     break;
                 case 'R':
-                    // moveRightForward();
                     ESP_LOGE(SPP_TAG," DERECHA");
-                    bdc_motor_forward(motor_2);
-                    bdc_motor_reverse(motor_1);
+                    bdc_motor_forward(motor_I);
+                    bdc_motor_reverse(motor_D);
                     vTaskDelay(pdMS_TO_TICKS(delay_ms));
-                    bdc_motor_brake(motor_1);
-                    bdc_motor_brake(motor_2);
+                    bdc_motor_brake(motor_I);
+                    bdc_motor_brake(motor_D);
                     break;
                 case 'L':
-                    // MoveLeftForward();
                     ESP_LOGE(SPP_TAG," IZQUIERDA");
-                    bdc_motor_reverse(motor_2);
-                    bdc_motor_forward(motor_1);
+                    bdc_motor_reverse(motor_I);
+                    bdc_motor_forward(motor_D);
                     vTaskDelay(pdMS_TO_TICKS(delay_ms));
-                    bdc_motor_brake(motor_1);
-                    bdc_motor_brake(motor_2);
+                    bdc_motor_brake(motor_I);
+                    bdc_motor_brake(motor_D);
                     break;
                 default:
                     break;
@@ -270,13 +266,13 @@ void esp_bt_gap_cb(esp_bt_gap_cb_event_t event, esp_bt_gap_cb_param_t *param)
 void app_main(void)
 {
     ESP_LOGI(TAG, "Create DC motor 1");
-    bdc_motor_config_t motor_1_config = {
+    bdc_motor_config_t motor_I_config = {
         .pwm_freq_hz = BDC_MCPWM_FREQ_HZ,
         .pwma_gpio_num = BDC_MCPWM_GPIO_A,
         .pwmb_gpio_num = BDC_MCPWM_GPIO_B,
     };
     ESP_LOGI(TAG, "Create DC motor 2");
-    bdc_motor_config_t motor_2_config = {
+    bdc_motor_config_t motor_D_config = {
         .pwm_freq_hz = BDC_MCPWM_FREQ_HZ,
         .pwma_gpio_num = BDC_MCPWM_GPIO_C,
         .pwmb_gpio_num = BDC_MCPWM_GPIO_D,
@@ -290,15 +286,15 @@ void app_main(void)
         .resolution_hz = BDC_MCPWM_TIMER_RESOLUTION_HZ,
     };
   
-    ESP_ERROR_CHECK(bdc_motor_new_mcpwm_device(&motor_1_config, &mcpwm_1_config, &motor_1));
-    ESP_ERROR_CHECK(bdc_motor_new_mcpwm_device(&motor_2_config, &mcpwm_2_config, &motor_2));
+    ESP_ERROR_CHECK(bdc_motor_new_mcpwm_device(&motor_I_config, &mcpwm_1_config, &motor_I));
+    ESP_ERROR_CHECK(bdc_motor_new_mcpwm_device(&motor_D_config, &mcpwm_2_config, &motor_D));
 
     ESP_LOGI(TAG, "Enable motors");
-    ESP_ERROR_CHECK(bdc_motor_enable(motor_1));
-    ESP_ERROR_CHECK(bdc_motor_enable(motor_2));
+    ESP_ERROR_CHECK(bdc_motor_enable(motor_I));
+    ESP_ERROR_CHECK(bdc_motor_enable(motor_D));
     // what does 300 or 400 mean?
-    bdc_motor_set_speed(motor_1,300);
-    bdc_motor_set_speed(motor_2,300);
+    bdc_motor_set_speed(motor_I,300);
+    bdc_motor_set_speed(motor_D,300);
     
    char bda_str[18] = {0};
     esp_err_t ret = nvs_flash_init();
