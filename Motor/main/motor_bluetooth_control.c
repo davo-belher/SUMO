@@ -54,11 +54,11 @@ static int delay_ms = 100;
 #define BDC_MCPWM_FREQ_HZ             25000    // 25KHz PWM
 #define BDC_MCPWM_DUTY_TICK_MAX       (BDC_MCPWM_TIMER_RESOLUTION_HZ / BDC_MCPWM_FREQ_HZ) // maximum value we can set for the duty cycle, in ticks
 // Motor Izquierdo
-#define BDC_MCPWM_GPIO_A              22    //  In1
-#define BDC_MCPWM_GPIO_B              21    //  In2
+#define BDC_MCPWM_GPIO_A              23    //  In1  //  C1 
+#define BDC_MCPWM_GPIO_B              27    //  In2  //  C2
 // Motor Derecho
-#define BDC_MCPWM_GPIO_C              19    //  In3
-#define BDC_MCPWM_GPIO_D              18    //  In4
+#define BDC_MCPWM_GPIO_C              25    //  In3  //  B1
+#define BDC_MCPWM_GPIO_D              26    //  In4  //  B2
 
 bdc_motor_handle_t motor_I = NULL;
 bdc_motor_handle_t motor_D = NULL;
@@ -293,7 +293,7 @@ void app_main(void)
     ESP_ERROR_CHECK(bdc_motor_enable(motor_I));
     ESP_ERROR_CHECK(bdc_motor_enable(motor_D));
     // what does 300 or 400 mean?
-    bdc_motor_set_speed(motor_I,300);
+    bdc_motor_set_speed(motor_I,317);
     bdc_motor_set_speed(motor_D,300);
     
    char bda_str[18] = {0};
